@@ -104,6 +104,123 @@ zarvich.post('/homepix',(req,res)=>{
 	})
 })
 
+// return all blogs
+zarvich.get('/Getblog', (req,res)=> {
+    var query = {};
+    console.log(req.query.id)
+    if(req.query.id){
+        query={roomtype_id:Number(req.query.id)}
+    }
+
+    //return a single blog
+    else if(req.query.OneBlog){
+        var OneBlog = (req.query.OneBlog)
+        query={'_id':(OneBlog)}
+    }
+
+
+    
+    db.collection('blog').find(query).toArray((err,result) => {
+        if(err) throw err;
+        res.send(result)
+    })
+})
+
+
+//Get Blog Comments
+zarvich.get('/GetblogComments', (req,res)=> {
+    var query = {};
+    console.log(req.query.id)
+    if(req.query.id){
+        query={roomtype_id:Number(req.query.id)}
+    }
+
+    //return a Comment by ID
+    else if (req.query.ActiveComment){
+        var ActiveComment= (req.query.ActiveComment)
+        query={_id:(req.query.ActiveComment)}
+    }
+
+        
+    db.collection('blogComments').find(query).toArray((err,result) => {
+        if(err) throw err;
+        res.send(result)
+    })
+})
+
+
+//Delete blog
+zarvich.delete('/delBlog/:id',(req,resp)=>{
+    console.log(req.params.id);
+    db.collection('blog').deleteOne(
+        {_id: (req.params.id)},(err,result)=>{
+        if(err) throw err;
+        resp.send(result)
+    })
+    
+})
+
+
+//Update blog Comments
+zarvich.post('/updateComments',(req,res)=>{
+	console.log(req.body);
+	db.collection('approvedComments').insert(req.body,(err,result)=>{
+		if(err) throw err;
+		res.send("Blog Posted")
+	})
+})
+
+//Delete comment
+zarvich.delete('/deleteComment/:id',(req,resp)=>{
+    console.log(req.params.id);
+    db.collection('blogComments').deleteOne(
+        {_id: (req.params.id)},(err,result)=>{
+        if(err) throw err;
+        resp.send(result)
+    })
+    
+})
+
+// post blog to database 
+zarvich.post('/blogPost',(req,res)=>{
+	console.log(req.body);
+	db.collection('blog').insert(req.body,(err,result)=>{
+		if(err) throw err;
+		res.send("Blog Posted")
+	})
+})
+
+// return all approved blogs
+zarvich.get('/GetApprovedComments', (req,res)=> {
+    var query = {};
+    console.log(req.query.id)
+    if(req.query.id){
+        query={roomtype_id:Number(req.query.id)}
+    }
+
+    //return a single blog
+    else if(req.query.OneApproved){
+        var OneApproved = (req.query.OneApproved)
+        query={'id':(OneApproved)}
+    }
+
+
+    
+    db.collection('approvedComments').find(query).toArray((err,result) => {
+        if(err) throw err;
+        res.send(result)
+    })
+})
+
+// post comments to database 
+zarvich.post('/commentPost',(req,res)=>{
+	console.log(req.body);
+	db.collection('blogComments').insert(req.body,(err,result)=>{
+		if(err) throw err;
+		res.send("Blog Posted")
+	})
+})
+
 
 //Put homecarousel images
 zarvich.put('/carousel/:id',(req,res)=>{
